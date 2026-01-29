@@ -1,0 +1,17 @@
+[Unit]
+Description=Hadoop HDFS Close Event Watcher(Local)
+After=network.target
+
+[Service]
+Type=simple
+
+WorkingDirectory=/work/jsy/job_project/hadoop_event
+ExecStart=/work/jsy/job_project/hadoop_event/daemon_hadoop_event/hadoop_event.sh
+
+# 종료 신호
+KillSignal=SIGTERM
+TimeoutStopSec=10
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

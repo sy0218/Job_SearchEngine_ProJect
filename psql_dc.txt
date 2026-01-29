@@ -1,0 +1,5 @@
+id|bigint||not null|nextval('job.hadoop_event_id_seq'::regclass)
+file_path|text||not null|
+file_size|bigint||not null|
+
+job_set|text||not null|

@@ -1,0 +1,10 @@
+[START] HDFS CLOSE watcher started
+[WATCH] Path prefix: /hive/job_project
+[CLOSE] path=/hive/job_project/org/20260129102650.gz, fileSize=143232
+[CLOSE] path=/hive/job_project/org/20260129141543.gz, fileSize=139498
+[START] HDFS CLOSE watcher started
+[WATCH] Path prefix: /hive/job_project
+[INIT] PostgreSQL connected
+[START] HDFS CLOSE watcher started
+[WATCH] Path prefix: /hive/job_project
+[CLOSE] path=/hive/job_project/org/20260129141543.gz, fileSize=143232
