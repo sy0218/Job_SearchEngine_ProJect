@@ -20,11 +20,20 @@ class Get_env:
         }
 
     @staticmethod
+    def _ocr():
+        return {
+            "config_path": os.environ["OCR_CONFIG_PATH"],
+            "stop_dir": os.environ["OCR_STOP_DIR"],
+            "stop_file": os.environ["OCR_STOP_FILE"]
+        }
+
+    @staticmethod
     def _redis():
         return {
             "redis_host": os.environ["REDIS_HOST"],
             "redis_port": os.environ["REDIS_PORT"],
             "redis_db": os.environ["REDIS_DB"],
+            "redis_img_db": os.environ["REDIS_DB_IMG"],
             "redis_password": os.environ["REDIS_PASSWORD"],
             "redis_jobhead_key": os.environ["REDIS_JOBHEAD_KEY"]
         }
@@ -35,8 +44,9 @@ class Get_env:
             "kafka_host": os.environ["KAFKA_HOST"],
             "schema_registry": os.environ["SCHEMA_REGISTRY"],
             "job_topic": os.environ["JOB_TOPIC"],
+            "job_group_id": os.environ["JOB_GROUP_ID"],
             "ocr_topic": os.environ["OCR_TOPIC"],
-            "job_group_id": os.environ["JOB_GROUP_ID"]
+            "ocr_group_id": os.environ["OCR_GROUP_ID"]
         }
 
     @staticmethod
@@ -47,6 +57,13 @@ class Get_env:
             "pg_db": os.environ["POSTGRESQL_DB"],
             "pg_user": os.environ["POSTGRESQL_USER"],
             "pg_password": os.environ["POSTGRESQL_PASSWORD"]
+        }
+
+    @staticmethod
+    def _nfs():
+        return {
+            "nfs_data": os.environ["NFS_DATA"],
+            "nfs_img": os.environ["NFS_IMG"]
         }
 
 

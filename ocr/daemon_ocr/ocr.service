@@ -1,0 +1,19 @@
+[Unit]
+Description=Ocr (Docker)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker exec ocr /work/job_project/ocr/daemon_ocr/ocr.sh start
+
+# 1. 먼저 stop 파일 생성
+ExecStop=/usr/bin/docker exec ocr /work/job_project/ocr/daemon_ocr/ocr.sh stop
+# 2. 프로세스가 사라질 떄 까지 대기
+ExecStop=/usr/bin/sh -c 'while kill -0 $MAINPID 2>/dev/null; do sleep 5; done'
+
+TimeoutStopSec=1800
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
