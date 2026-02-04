@@ -60,6 +60,7 @@ do
 			do
 				rm -f "${rm_file}"
 			done
+            break
 		fi
 	done
 

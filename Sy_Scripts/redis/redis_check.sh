@@ -4,9 +4,10 @@
 
 set -e
 
+########################################
 # 1. 초기 입력
-echo -n "관리할 Redis 컨테이너명을 입력하시오: "
-read CONTAINER_NAME
+########################################
+read -p "관리할 Redis 컨테이너명을 입력하시오: " CONTAINER_NAME
 
 if [ -z "${CONTAINER_NAME}" ]; then
     log_error "컨테이너명이 입력되지 않았습니다."
@@ -18,126 +19,131 @@ if ! docker ps --filter "name=${CONTAINER_NAME}" --filter "status=running" | gre
     exit 1
 fi
 
-echo -n "Redis 패스워드를 입력하시오: "
-read -s REDIS_PASS
+read -s -p "Redis 패스워드를 입력하시오: " REDIS_PASS
 echo ""
 
-# 2. 연결 테스트 (공통 함수 사용)
 if ! run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" ping | grep -q "PONG"; then
     log_error "Redis 인증 실패 또는 연결 불가!"
     exit 1
 fi
-
 log_info "컨테이너 [${CONTAINER_NAME}] 인증 성공."
 
-# 3. 메인 루프
+########################################
+# 2. 메인 루프
+########################################
 while true; do
     echo ""
     echo "------------------------------------------"
-    echo "    Redis (${CONTAINER_NAME}) 관리 도구"
+    echo " Redis (${CONTAINER_NAME}) 관리 도구"
     echo "------------------------------------------"
-    echo "1) DB 확인 (Select)"
-    echo "2) 모든 키 목록 조회 (KEYS *)"
-    echo "3) 키 멤버 확인 (SMEMBERS)"
-    echo "4) 키 개수 확인 (SCARD)"
-    echo "5) 데이터 일부 조회 (SSCAN)"
-    echo "6) 특정 값 존재 여부 확인 (SISMEMBER)"
-    echo "7) 키 삭제 (DEL)"
-    echo "8) 키 메모리 사용량 확인 (MB)"
+    echo "1) 전체 키 조회 (KEYS *)"
+    echo "2) 키 값 전체 조회"
+    echo "3) 키 데이터 개수 조회"
+    echo "4) 일부 조회 (SCAN 계열)"
+    echo "5) 특정 값 존재 여부 확인"
+    echo "6) 키 삭제 (DEL)"
+    echo "7) 키 메모리 사용량 확인"
+    echo "8) 현재 DB 전체 키 삭제 (FLUSHDB)"
     echo "q) 종료"
     echo "------------------------------------------"
     read -p "메뉴 번호를 선택하세요: " choice
 
-    case $choice in
+    [[ "$choice" =~ [qQ] ]] && { log_info "스크립트를 종료합니다."; break; }
+
+    if ! [[ "$choice" =~ ^[1-8]$ ]]; then
+        log_error "잘못된 선택입니다."
+        continue
+    fi
+
+    read -p "작업할 Redis DB 번호를 입력하세요: " DB_NUM
+    [ -z "$DB_NUM" ] && { log_error "DB 번호 누락"; continue; }
+
+    if [[ "$choice" =~ ^[2-7]$ ]]; then
+        read -p "대상 Redis Key를 입력하세요: " KEY_NAME
+        [ -z "$KEY_NAME" ] && { log_error "Key 누락"; continue; }
+
+        KEY_TYPE=$(run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" TYPE "${KEY_NAME}")
+
+        if [[ "$KEY_TYPE" == "none" ]]; then
+            log_error "Key '${KEY_NAME}' does not exist."
+            continue
+        fi
+
+        log_info "Key type: ${KEY_TYPE}"
+    fi
+
+########################################
+# 3. 메뉴 처리
+########################################
+    case "$choice" in
         1)
-            read -p "확인할 DB 번호를 입력하세요: " db_num
-            if [ -n "${db_num}" ]; then
-                log_info "DB ${db_num}번 선택 및 연결 확인"
-                run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" select "${db_num}"
-            else
-                log_error "DB 번호 누락"
-            fi
+            log_info "DB ${DB_NUM} 전체 키 조회"
+            run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" KEYS "*"
             ;;
         2)
-            log_info "전체 키 목록 조회"
-            run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" KEYS "*"
+            case "$KEY_TYPE" in
+                string) run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" GET "${KEY_NAME}" ;;
+                hash)   run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" HGETALL "${KEY_NAME}" ;;
+                list)   run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" LRANGE "${KEY_NAME}" 0 -1 ;;
+                set)    run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" SMEMBERS "${KEY_NAME}" ;;
+                zset)   run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" ZRANGE "${KEY_NAME}" 0 -1 WITHSCORES ;;
+                *) log_error "지원하지 않는 타입" ;;
+            esac
             ;;
         3)
-            read -p "확인할 Redis Key를 입력하세요: " key_name
-            if [ -n "${key_name}" ]; then
-                log_info "${key_name} 모든 값 확인 (SMEMBERS)"
-                run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" SMEMBERS "${key_name}"
-            else
-                log_error "Key 누락"
-            fi
+            case "$KEY_TYPE" in
+                string) echo "string은 개수 개념이 없습니다." ;;
+                hash)   run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" HLEN "${KEY_NAME}" ;;
+                list)   run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" LLEN "${KEY_NAME}" ;;
+                set)    run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" SCARD "${KEY_NAME}" ;;
+                zset)   run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" ZCARD "${KEY_NAME}" ;;
+            esac
             ;;
         4)
-            read -p "개수를 확인할 Redis Key를 입력하세요: " key_name
-            if [ -n "${key_name}" ]; then
-                log_info "${key_name} 전체 개수 확인 (SCARD)"
-                run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" SCARD "${key_name}"
-            else
-                log_error "Key 누락"
-            fi
+            case "$KEY_TYPE" in
+                set)  run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" SSCAN "${KEY_NAME}" 0 ;;
+                hash) run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" HSCAN "${KEY_NAME}" 0 ;;
+                zset) run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" ZSCAN "${KEY_NAME}" 0 ;;
+                *) log_error "SCAN 불가능한 타입" ;;
+            esac
             ;;
         5)
-            read -p "조회할 Redis Key를 입력하세요: " key_name
-            if [ -n "${key_name}" ]; then
-                log_info "${key_name} 일부 조회 (SSCAN 0)"
-                run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" SSCAN "${key_name}" 0
-            else
-                log_error "Key 누락"
-            fi
+            case "$KEY_TYPE" in
+                set)
+                    read -p "확인할 값(Value): " VALUE
+                    run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" SISMEMBER "${KEY_NAME}" "${VALUE}"
+                    ;;
+                hash)
+                    read -p "확인할 필드(Field): " FIELD
+                    run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" HEXISTS "${KEY_NAME}" "${FIELD}"
+                    ;;
+                *) log_error "해당 타입은 존재 여부 확인 불가" ;;
+            esac
             ;;
         6)
-            read -p "대상 Redis Key를 입력하세요: " key_name
-            read -p "확인할 '값(Value)'을 입력하세요: " search_val
-            if [ -n "${key_name}" ] && [ -n "${search_val}" ]; then
-                log_info "${key_name} 내에 '${search_val}' 존재 여부 확인"
-                RESULT=$(run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" SISMEMBER "${key_name}" "${search_val}")
-                [ "$RESULT" == "1" ] && echo ">> [1] 이미 존재" || echo ">> [0] 없음"
-            else
-                log_error "Key/Value 누락"
+            read -p "정말 '${KEY_NAME}'을(를) 삭제하시겠습니까? (y/n): " confirm
+            if [[ "$confirm" == "y" ]]; then
+                run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" DEL "${KEY_NAME}"
+                log_info "삭제 완료"
             fi
             ;;
         7)
-            read -p "삭제할 Redis Key를 입력하세요: " key_name
-            if [ -n "${key_name}" ]; then
-                read -p "정말 '${key_name}'을(를) 삭제하시겠습니까? (y/n): " confirm
-                if [ "$confirm" = "y" ]; then
-                    log_info "${key_name} 삭제 완료"
-                    run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" DEL "${key_name}"
-                fi
+            RESULT=$(run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" MEMORY USAGE "${KEY_NAME}")
+            if [[ -z "$RESULT" || "$RESULT" == "(nil)" ]]; then
+                echo "메모리 정보 없음"
             else
-                log_error "Key 누락"
+                echo "Memory: ${RESULT} bytes"
+                echo "≈ $(echo "scale=2; $RESULT/1024" | bc) KB"
+                echo "≈ $(echo "scale=2; $RESULT/1024/1024" | bc) MB"
             fi
             ;;
         8)
-            read -p "메모리 사용량을 확인할 Redis Key를 입력하세요: " key_name
-            if [ -n "${key_name}" ]; then
-                log_info "${key_name} 메모리 사용량 확인 (bytes)"
-                RESULT=$(run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" MEMORY USAGE "${key_name}")
-
-                if [ -z "$RESULT" ] || [ "$RESULT" = "(nil)" ]; then
-                    echo ">> 키가 존재하지 않거나 메모리 정보를 가져올 수 없습니다."
-                else
-                    echo ">> ${key_name} memory usage: ${RESULT} bytes"
-                    echo ">> 약 $(echo "scale=2; ${RESULT}/1024" | bc) KB"
-                    echo ">> 약 $(echo "scale=2; ${RESULT}/1024/1024" | bc) MB"
-                fi
-            else
-                log_error "Key 누락"
-            fi
-            ;;
-        q|Q)
-            log_info "스크립트를 종료합니다."
-            break
-            ;;
-        *)
-            log_error "잘못된 선택입니다."
+            log_info "DB ${DB_NUM} 전체 키 삭제 실행 (FLUSHDB)"
+            run_redis "${CONTAINER_NAME}" "${REDIS_PASS}" -n "${DB_NUM}" FLUSHDB
+            log_info "DB ${DB_NUM} 전체 키 삭제 완료"
             ;;
     esac
-    
+
     echo ""
-    read -p $'\e[32m계속하려면 엔터를 누르세요...\e[0m' temp
+    read -p $'\e[32m계속하려면 엔터를 누르세요...\e[0m'
 done

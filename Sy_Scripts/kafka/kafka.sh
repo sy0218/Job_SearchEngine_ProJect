@@ -17,7 +17,7 @@ case "${KAFKA_OPT}" in
         for ip in ${kafka_ip}
         do
             log_info "[Kafka] ${ip} systemctl ${KAFKA_OPT}"
-            ssh ${ip} "systemctl ${KAFKA_OPT} kafka"
+            ssh ${ip} "systemctl ${KAFKA_OPT} kafka-server.service"
             echo
         done
         ;;

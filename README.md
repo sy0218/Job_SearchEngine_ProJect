@@ -51,7 +51,7 @@
 | **처리** | 🚚 `hadoop_upload.service` | 로컬(NFS) 데이터 병합 후 **HDFS 업로드** → **[`📘 hadoop_upload`](./docs/hadoop_upload_service.md)** |
 | **처리** | 🕵️ `hadoop_event.service` | HDFS CLOSE 이벤트 감시 → 로그 기록 → **PGSQL 적재**→ **[`📘 hadoop_event`](./docs/hadoop_event_service.md)** |
 | **처리** | 🔍  `ocr.service` | Kafka 이미지 메타 수신 → Redis 캐싱 → **OCR 처리** → **[`📘 ocr_service`](./docs/ocr_service.md)** |
-| **처리** | 🛢️ `warehouse.service` | **OCR 처리** 및 텍스트 정제 후 HDFS 업로드 → **[`📘 warehouse`](./job_all_md/warehouse.md)** |
+| **처리** | 🛢️ `warehouse.service` | **OCR 수신** → 텍스트 정제 + 형태소 분석 → ES 벌크용 전처리 → **HDFS 업로드**  → **[`📘 warehouse`](./docs/warehouse_service.md)** |
 | **적재·검색** | 📤 `esupload.service` | HDFS Bulk 데이터 **Elasticsearch 전송** → **[`📘 esupload`](./job_all_md/esupload.md)** |
 
 ---

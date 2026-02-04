@@ -4,9 +4,14 @@ from confluent_kafka.avro import AvroProducer, AvroConsumer
 from confluent_kafka import avro
 
 import redis
+import io
+import gzip
+import json
 
 import psycopg2
 from psycopg2.extras import execute_values
+
+import pyarrow.fs as fs
 
 class KafkaHook:
     """
@@ -140,6 +145,7 @@ class PostgresHook:
         self.user = user
         self.password = password
         self.conn = None
+        self.cur = None
 
     def connect(self):
         self.conn = psycopg2.connect(
@@ -149,10 +155,43 @@ class PostgresHook:
             user = self.user,
             password = self.password
         )
+        self.cur = self.conn.cursor()
 
     def close(self):
+        if self.cur:
+            self.cur.close()
         if self.conn:
             self.conn.close()
 
+    def fetchone(self, sql, params=None):
+        self.cur.execute(sql, params)
+        return self.cur.fetchone()
+
+    def execute(self, sql, params=None, commit=False):
+        self.cur.execute(sql, params)
+        if commit:
+            self.conn.commit()
+
     def __getattr__(self, name):
         return getattr(self.conn, name)
+
+class HdfsHook:
+    """
+        HDFS 연결 + 파일 읽기 / 쓰기 메서드 제공
+    """
+    def __init__(self, host, user):
+        self.host = host
+        self.user = user
+        self.conn = None
+
+    def connect(self):
+        self.conn = fs.HadoopFileSystem(host=self.host, user=self.user)
+
+    def read_bytes(self, hdfs_path):
+        with self.conn.open_input_file(hdfs_path) as f:
+            return f.read()
+
+    def upload_lines(self, hdfs_path, lines):
+        with self.conn.open_output_stream(hdfs_path) as f_out:
+            for line in lines:
+                f_out.write((line + "\n").encode('utf-8'))

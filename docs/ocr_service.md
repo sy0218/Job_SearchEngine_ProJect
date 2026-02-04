@@ -1,4 +1,4 @@
-# 🧠 ocr.service (Image OCR Processor)
+# 🔍 ocr.service (Image OCR Processor)
 > Kafka로 전달된 이미지 메타 데이터(해시값)를 기반으로  
 
 > NFS에 저장된 이미지를 불러와 **OCR 텍스트를 추출**하고

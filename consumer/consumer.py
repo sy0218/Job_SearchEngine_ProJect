@@ -73,7 +73,7 @@ def process_message(msg_value):
                 (props["nfs_path"]["img"], img_hash[0:2], img_hash[2:4], img_hash),
                 binary_blob
             )
-            images.append(save_path)
+            images.append(img_hash)
 
         return msg_value | {"body_text": body, "body_img": images} | banner
 
@@ -165,8 +165,7 @@ def _main():
                 # body_img → ocr_img 토픽 전송
                 for futures_result in futures_results:
                     for img_path in futures_result.get("body_img", []):
-                        img_fn = os.path.basename(img_path) # 파일명만 전송
-                        kafka_producer.produce(kafka_env["ocr_topic"], img_fn)
+                        kafka_producer.produce(kafka_env["ocr_topic"], img_path)
                 kafka_producer.flush()
 
                 # ndjson 저장할 파일명

@@ -47,7 +47,7 @@ while true; do
     case $choice in
         1)
             log_info "Schema Registry Subject 목록 조회..."
-            curl -s "${SCHEMA_REGISTRY_URL}/subjects" | jq . || curl -s "${SCHEMA_REGISTRY_URL}/subjects"
+            curl -s "${SCHEMA_REGISTRY_URL}/subjects"
             ;;
         2)
             read -p "스키마를 확인할 토픽명을 입력하세요: " target_topic

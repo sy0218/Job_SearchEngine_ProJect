@@ -1,0 +1,100 @@
+## 컬렉터 ##
+docker run -d -it \
+  --name collector \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v /etc/timezone:/etc/timezone:ro \
+  collector:v1 \
+  /bin/bash
+
+
+## 컨슈머 ##
+docker run -d -it \
+  --name consumer \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v /etc/timezone:/etc/timezone:ro \
+  -v /nfs:/nfs \
+  consumer:v1 \
+  /bin/bash
+
+
+## OCR ##
+docker run -d -it \
+  --name ocr \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v /etc/timezone:/etc/timezone:ro \
+  -v /nfs:/nfs:ro \
+  ocr:v1 \
+  /bin/bash
+
+
+## 웨어하우스 ##
+docker run -d -it \
+  --name warehouse \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v /etc/timezone:/etc/timezone:ro \
+  -v /etc/job_project.conf:/etc/job_project.conf:ro \
+  -v /etc/hosts:/etc/hosts:ro \
+  -v /application/hadoop:/application/hadoop:ro \
+  warehouse:v1 \
+  /bin/bash
+
+
+## PostgreSQL ##
+docker run --name job_postgres \
+  -v /Data_project_job/docker_image/postgres/pgdata:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  -e POSTGRES_PASSWORD=1234 \
+  -d postgres:14
+
+
+## Redis ##
+docker run --name job_redis -d \
+  -p 6379:6379 \
+  -v /Data_project_job/docker_image/redis/rd_data:/data \
+  redis:7 \
+  redis-server \
+  --requirepass 1234 \
+  --appendonly no \
+  --save 600 1
+
+
+## Schema registry ## 
+docker run -d \
+  --name schema-registry \
+  -p 8081:8081 \
+  -e SCHEMA_REGISTRY_HOST_NAME=schema-registry \
+  -e SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=PLAINTEXT://192.168.122.60:9092,PLAINTEXT://192.168.122.61:9092,PLAINTEXT://192.168.122.62:9092 \
+  -e SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR=3 \
+  confluentinc/cp-schema-registry:7.6.0
+
+
+## prometheus, grafana ##
+
+# ( prometheus.yml )
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['192.168.122.59:9100', '192.168.122.60:9100', '192.168.122.61:9100', '192.168.122.62:9100', '192.168.122.63:9100', '192.168.122.64:9100', '192.168.122.65:9100']
+
+# ( docker compose )
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - /work/jsy/Sy_Scripts/prometheus_grafana/docker_compose/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    command:
+      - "--storage.tsdb.retention.time=2d"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin

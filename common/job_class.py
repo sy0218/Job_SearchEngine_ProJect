@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, configparser, random, hashlib, json
+import os, configparser, random, hashlib, json, io, gzip, re
 from pathlib import Path
 
 class Get_env:
@@ -28,11 +28,19 @@ class Get_env:
         }
 
     @staticmethod
+    def _warehouse():
+        return {
+            "config_path": os.environ["WAREHOUSE_CONFIG_PATH"],
+            "stop_dir": os.environ["WAREHOUSE_STOP_DIR"],
+            "stop_file": os.environ["WAREHOUSE_STOP_FILE"]
+        }
+
+    @staticmethod
     def _redis():
         return {
             "redis_host": os.environ["REDIS_HOST"],
             "redis_port": os.environ["REDIS_PORT"],
-            "redis_db": os.environ["REDIS_DB"],
+            "redis_job_db": os.environ["REDIS_DB_JOB"],
             "redis_img_db": os.environ["REDIS_DB_IMG"],
             "redis_password": os.environ["REDIS_PASSWORD"],
             "redis_jobhead_key": os.environ["REDIS_JOBHEAD_KEY"]
@@ -57,6 +65,19 @@ class Get_env:
             "pg_db": os.environ["POSTGRESQL_DB"],
             "pg_user": os.environ["POSTGRESQL_USER"],
             "pg_password": os.environ["POSTGRESQL_PASSWORD"]
+        }
+
+    @staticmethod
+    def _es():
+        return {
+            "job_index": os.environ["ES_JOB_INDEX"]
+        }
+
+    @staticmethod
+    def _hadoop():
+        return {
+            "hadoop_fs_name": os.environ["HADOOP_FS_NAME"],
+            "hadoop_user": os.environ["HADOOP_USER"]    
         }
 
     @staticmethod
@@ -89,6 +110,7 @@ class DataPreProcessor:
             data를 SHA1 해시로 변경
         """
         return hashlib.sha256(data.encode('utf-8')).hexdigest()
+
     @staticmethod
     def _dict_to_ndjson(dict_lst):
         """
@@ -96,6 +118,37 @@ class DataPreProcessor:
             각 딕셔너리를 한 줄씩 JSON으로 직렬화
         """
         return "\n".join(json.dumps(d, ensure_ascii=False) for d in dict_lst) + "\n"
+
+    @staticmethod
+    def _decompress_gzip_bytes(data):
+        """
+            gzip 압축된 bytes 데이터를 받아 → UTF-8 문자열로 변환하여 반환
+        """
+        with gzip.GzipFile(fileobj=io.BytesIO(data)) as gz:
+            file_bytes = gz.read()
+        return file_bytes.decode("utf-8")
+
+    @staticmethod
+    def _clean_ocr_text(text_lst):
+        """
+            이미지 텍스트 배열을 받아 → 전처리 후 유효한 텍스트만 배열로 반환 
+        """
+        clean = []
+        for text in text_lst:
+            text = re.sub(r'[^가-힣a-zA-Z0-9\s/~.]+', ' ', text)
+            text = re.sub(r'\s+', ' ', text).strip()
+            clean.append(text)
+        return clean
+
+    @staticmethod
+    def _get_es_action(index, doc_id):
+        """
+            Elasticsearch Bulk용 action 메타 추출
+            - index : 업로드할 인덱스명
+            - doc_id : 문서 ID
+        """
+        action = {"index": {"_index": index, "_id": doc_id}}
+        return json.dumps(action, ensure_ascii=False)
         
 
 class CopyToLocal:

@@ -1,0 +1,19 @@
+[Unit]
+Description=Warehouse (Docker)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker exec warehouse /work/job_project/warehouse/daemon_warehouse/warehouse.sh start
+
+# 1. 먼저 stop 파일 생성
+ExecStop=/usr/bin/docker exec warehouse /work/job_project/warehouse/daemon_warehouse/warehouse.sh stop
+# 2. 프로세스가 사라질 떄 까지 대기
+ExecStop=/usr/bin/sh -c 'while kill -0 $MAINPID 2>/dev/null; do sleep 5; done'
+
+TimeoutStopSec=1800
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
