@@ -58,8 +58,25 @@
 ---
 <br><br>
 
+# 🧪 **Integration Test**
+> 각 데몬 서비스별 **통합 테스트 문서**입니다.  
+> Collector, Consumer 등 서비스가 **Kafka, Redis, HDFS, PostgreSQL, Elasticsearch** 등과 연동되어 정상 동작하는지 검증합니다.
+> **Grafana 모니터링 항목**: CPU I/O Wait (iowait), CPU 사용률, Load Average, 메모리 사용률
 
-## 🛠️ **Tech Stack**
+| 서비스 | 테스트 문서 |
+|--------|------------|
+| 📡 `collector.service` | **[`📘 collector 통합 테스트`](./docs/collector_integration_test.md)** |
+| 📦 `consumer.service` | **[`📘 consumer 통합 테스트`](./docs/test_consumer.md)** |
+| 🚚 `hadoop_upload.service` | **[`📘 hadoop_upload 통합 테스트`](./docs/test_hadoop_upload.md)** |
+| 🕵️  `hadoop_event.service` | **[`📘 hadoop_event 통합 테스트`](./docs/test_hadoop_event.md)** |
+| 🔍  `ocr.service` | **[`📘 ocr 통합 테스트`](./docs/test_ocr.md)** |
+| 🛢️  `warehouse.service` | **[`📘 warehouse 통합 테스트`](./docs/test_warehouse.md)** |
+| 📤 `esupload.service` | **[`📘 esupload 통합 테스트`](./docs/test_esupload.md)** |
+
+---
+<br><br>
+
+# 🛠️ **Tech Stack**
 
 | Category | Stack |
 |:--------:|:-----|
