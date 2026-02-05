@@ -36,6 +36,14 @@ class Get_env:
         }
 
     @staticmethod
+    def _es_upload():
+        return {
+            "config_path": os.environ["ES_UPLOAD_CONFIG_PATH"],
+            "stop_dir": os.environ["ES_UPLOAD_STOP_DIR"],
+            "stop_file": os.environ["ES_UPLOAD_STOP_FILE"]
+        }
+
+    @staticmethod
     def _redis():
         return {
             "redis_host": os.environ["REDIS_HOST"],
@@ -70,6 +78,7 @@ class Get_env:
     @staticmethod
     def _es():
         return {
+            "es_host": os.environ["ES_HOST"],
             "job_index": os.environ["ES_JOB_INDEX"]
         }
 

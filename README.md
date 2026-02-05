@@ -34,7 +34,7 @@
 | ⚡ **Redis 캐시** | 고속 데이터 처리용 Redis 설정/운영 | **[`📘 매뉴얼`](./docs/redis_setup.md)** |
 | 🦓 **ZooKeeper** | 분산 환경 설정 관리 및 동기화 | **[`📘 매뉴얼`](./docs/zookeeper_setup.md)** |
 | 📡 **Kafka** | 데이터 스트리밍 플랫폼 구축/활용 | **[`📘 매뉴얼`](./docs/kafka_setup.md)** |
-| └─ 📦 Schema Registry | 카프카 직렬화 & 스키마 관리 | **[`📘 매뉴얼`](./docs/kafka_schema_registry_setup.md)** |
+| └─ 📦 **Schema Registry** | 카프카 직렬화 & 스키마 관리 | **[`📘 매뉴얼`](./docs/kafka_schema_registry_setup.md)** |
 | 🐘 **Hadoop** | 분산 시스템 클러스터 설치/설정 | **[`📘 매뉴얼`](./docs/hadoop_setup.md)** |
 | 🐝 **Hive** | 데이터 웨어하우스 설치/운영 | **[`📘 매뉴얼`](./job_all_md/hive_manual.md)** |
 | 🔍 **Elasticsearch** | 검색엔진 클러스터 설치/설정 | **[`📘 매뉴얼`](./docs/elasticsearch_setup.md)** |
@@ -53,7 +53,7 @@
 | **처리** | 🕵️ `hadoop_event.service` | HDFS CLOSE 이벤트 감시 → 로그 기록 → **PGSQL 적재**→ **[`📘 hadoop_event`](./docs/hadoop_event_service.md)** |
 | **처리** | 🔍  `ocr.service` | Kafka 이미지 메타 수신 → Redis 캐싱 → **OCR 처리** → **[`📘 ocr_service`](./docs/ocr_service.md)** |
 | **처리** | 🛢️ `warehouse.service` | **OCR 수신** → 텍스트 정제 + 형태소 분석 → ES 벌크용 전처리 → **HDFS 업로드**  → **[`📘 warehouse`](./docs/warehouse_service.md)** |
-| **적재·검색** | 📤 `esupload.service` | HDFS Bulk 데이터 **Elasticsearch 전송** → **[`📘 esupload`](./job_all_md/esupload.md)** |
+| **적재·검색** | 📤 `esupload.service` | HDFS Bulk 데이터 **Elasticsearch Bulk 전송** → **[`📘 esupload`](./docs/es_upload_service.md)** |
 
 ---
 <br><br>

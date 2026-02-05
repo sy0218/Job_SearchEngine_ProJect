@@ -56,11 +56,13 @@ def _main():
             user=hadoop_env["hadoop_user"]
         )
         hdfs.connect()
+        logger.info("Hadoop 연결 완료")
 
         # ===============================
         # 형태소 분석 연결
         # ===============================
         morph = MorphAnalyzer()
+        logger.info("Morph 연결 완료")
 
         # ===============================
         # 메인 처리 루프

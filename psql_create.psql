@@ -25,3 +25,9 @@ CREATE OR REPLACE VIEW job.hadoop_org AS
 SELECT id, file_path, file_size, event_check
 FROM job.hadoop_event
 WHERE file_path LIKE '/hive/job_project/org/%'
+
+## job.hadoop_new ##
+CREATE OR REPLACE VIEW job.hadoop_new AS
+SELECT id, file_path, file_size, event_check
+FROM job.hadoop_event
+WHERE file_path LIKE '/hive/job_project/new/%'
