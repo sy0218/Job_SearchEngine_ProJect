@@ -46,7 +46,7 @@ kafka-topics.sh --list --bootstrap-server <broker>
 ---
 <br>
 
-## 🔍 테스트 시나리오
+# 🔍 테스트 시나리오
 ## **✅ 1. 서비스 정상 기동 테스트**
 ### ✔ 목적 : Collector 서비스가 정상적으로 시작되는지 확인
 ---
@@ -134,19 +134,13 @@ systemctl stop collector.service
 <br>
 
 ## 📊 Grafana 모니터링 항목
-> **테스트 중 다음 지표를 모니터링한다.**
----
-### 🔴 CPU I/O Wait (iowait)
-- 디스크 병목 여부 확인
----
-### 🔴 CPU 사용률
-- 과부화 여부 확인
----
-### 🔴 Load Average
-- 시스템 부하 상태 확인
---- 
-### 🔴 메모리 사용률
-- 메모리 누수 여부 확인
+
+| 지표                  | 쿼리                                                                                     | 결과     |
+|----------------------|-----------------------------------------------------------------------------------------|---------|
+| **CPU I/O Wait (iowait)** | `avg(rate(node_cpu_seconds_total{instance="192.168.122.65:9100", mode="iowait"}[1m])) * 100` | 0.0286% |
+| **CPU 사용률**             | `100 - (avg(rate(node_cpu_seconds_total{instance="192.168.122.65:9100", mode="idle"}[1m])) * 100)` | 22.2%   |
+| **Load Average**          | `node_load1{instance="192.168.122.65:9100"}`                                           | 2.7     |
+| **메모리 사용률**           | `(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100` | 37%     |
 
 ---
 <br>
@@ -197,10 +191,12 @@ tail -f /work/job_project/logs/collector/*.log
 - 시스템 리소스 사용량 안정적
 ---
 ## 2. 성능 평가
--
--
--
+- CPU I/O Wait: 0.0286% (**디스크 병목 없음**)
+- CPU 사용률: 22.2% (**과부화 없음**)
+- Load Average: 2.7 (**시스템 부하 정상**)
+- 메모리 사용률: 37% (**메모리 누수 없음**)
+- **크롤링 데이터 정상 수집, Redis 중복 필터 정상, Kafka 전송 정상**
 ---
 ## 3. 개선 필요 사항
-- 테스트 중 발견된 이슈 없음 (현재까지 모든 항목 PASS)
+- 테스트 중 발견된 이슈 없음 (**현재까지 모든 항목 PASS**)
 ---
