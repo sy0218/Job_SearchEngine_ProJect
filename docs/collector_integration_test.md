@@ -21,7 +21,7 @@
 | 항목 | 내용 |
 |------|------|
 | OS | Ubuntu 22.04 |
-| Python | 3.10,12 |
+| Python | 3.10.12 |
 | Docker | 사용 |
 | Chrome | 버전: 143.0.7499.192 |
 | Redis | host: 7.4.7 |
@@ -134,13 +134,23 @@ systemctl stop collector.service
 <br>
 
 ## 📊 Grafana 모니터링 항목
+> **Collector 서비스 기동 전/후 리소스 비교**
 
-| 지표                  | 쿼리                                                                                     | 결과     |
-|----------------------|-----------------------------------------------------------------------------------------|---------|
-| **CPU I/O Wait (iowait)** | `avg(rate(node_cpu_seconds_total{instance="192.168.122.65:9100", mode="iowait"}[1m])) * 100` | 0.0286% |
-| **CPU 사용률**             | `100 - (avg(rate(node_cpu_seconds_total{instance="192.168.122.65:9100", mode="idle"}[1m])) * 100)` | 22.2%   |
-| **Load Average**          | `node_load1{instance="192.168.122.65:9100"}`                                           | 2.7     |
-| **메모리 사용률**           | `(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100` | 37%     |
+| 📌 지표 | 📈 Grafana 쿼리 | 🔍 측정 결과 |
+|--------|----------------|-------------|
+| **CPU I/O Wait (iowait)** | `avg(rate(node_cpu_seconds_total{instance="192.168.122.65:9100", mode="iowait"}[1m])) * 100` | **0.005% (기동 전)** → **0.0286% (기동 후)** |
+| **CPU 사용률** | `100 - (avg(rate(node_cpu_seconds_total{instance="192.168.122.65:9100", mode="idle"}[1m])) * 100)` | **1% (기동 전)** → **22.2% (기동 후)** |
+| **Load Average (1m)** | `node_load1{instance="192.168.122.65:9100"}` | **0.1 (기동 전)** → **2.7 (기동 후)** |
+| **메모리 사용률** | `(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100` | **34% (기동 전)** → **37% (기동 후)** |
+
+---
+
+### **✔ 검증 항목 ( 정상 확인 )**
+✅ CPU 및 Load Average는 서비스 기동 후 증가했으나 **안정적인 범위**
+
+✅ 메모리 사용률 변화는 **미미**
+
+✅ I/O Wait는 **매우 낮은 수준 유지**
 
 ---
 <br>
@@ -191,11 +201,22 @@ tail -f /work/job_project/logs/collector/*.log
 - 시스템 리소스 사용량 안정적
 ---
 ## 2. 성능 평가
-- CPU I/O Wait: 0.0286% (**디스크 병목 없음**)
-- CPU 사용률: 22.2% (**과부화 없음**)
-- Load Average: 2.7 (**시스템 부하 정상**)
-- 메모리 사용률: 37% (**메모리 누수 없음**)
-- **크롤링 데이터 정상 수집, Redis 중복 필터 정상, Kafka 전송 정상**
+- **CPU I/O Wait: 0.005% → 0.0286%**  
+  → 증가 폭이 매우 작으며 **디스크 병목 없음**
+
+- **CPU 사용률: 1% → 22.2%**  
+  → 서비스 기동에 따른 정상적인 증가이며 **과부화 없음**
+
+- **Load Average: 0.1 → 2.7**  
+  → 작업 처리 증가에 따른 상승이나 **시스템 부하 정상 범위**
+
+- **메모리 사용률: 34% → 37%**  
+  → 사용량 변화가 미미하며 **메모리 누수 없음**
+
+- **데이터 파이프라인 상태 (기동 후 확인)**
+  - 크롤링 데이터 **정상 수집**
+  - Redis **중복 필터 정상 동작**
+  - Kafka **메시지 전송 정상**
 ---
 ## 3. 개선 필요 사항
 - 테스트 중 발견된 이슈 없음 (**현재까지 모든 항목 PASS**)
