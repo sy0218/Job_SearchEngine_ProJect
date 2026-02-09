@@ -68,7 +68,7 @@
 | 서비스 | 테스트 문서 |
 |--------|------------|
 | 📡 `collector.service` | **[`📘 collector 통합 테스트`](./docs/collector_integration_test.md)** |
-| 📦 `consumer.service` | **[`📘 consumer 통합 테스트`](./docs/test_consumer.md)** |
+| 📦 `consumer.service` | **[`📘 consumer 통합 테스트`](./docs/consumer_integration_test.md)** |
 | 🚚 `hadoop_upload.service` | **[`📘 hadoop_upload 통합 테스트`](./docs/test_hadoop_upload.md)** |
 | 🕵️  `hadoop_event.service` | **[`📘 hadoop_event 통합 테스트`](./docs/test_hadoop_event.md)** |
 | 🔍  `ocr.service` | **[`📘 ocr 통합 테스트`](./docs/test_ocr.md)** |
