@@ -47,9 +47,6 @@ class Get_env:
     def _redis():
         return {
             "redis_host": os.environ["REDIS_HOST"],
-            "redis_port": os.environ["REDIS_PORT"],
-            "redis_job_db": os.environ["REDIS_DB_JOB"],
-            "redis_img_db": os.environ["REDIS_DB_IMG"],
             "redis_password": os.environ["REDIS_PASSWORD"],
             "redis_jobhead_key": os.environ["REDIS_JOBHEAD_KEY"]
         }

@@ -64,15 +64,31 @@ docker run --name job_postgres \
   -d postgres:14
 
 
-## Redis ##
-docker run --name job_redis -d \
-  -p 6379:6379 \
+## Redis ( Master ) ##
+docker run --name job_redis_master -d \
+  -p 6379:6379 -p 16379:16379 \
   -v /Data_project_job/docker_image/redis/rd_data:/data \
   redis:7 \
   redis-server \
-  --requirepass 1234 \
-  --appendonly no \
-  --save 600 1
+  --requirepass 1234 --masterauth 1234 \
+  --cluster-enabled yes --cluster-node-timeout 5000 \
+  --appendonly no --save 600 1 \
+  --cluster-announce-ip 192.168.122.65 \
+  --cluster-announce-port 6379 \
+  --cluster-announce-bus-port 1637
+
+## Redis ( Slave ) ##
+docker run --name job_redis_slave -d \
+  -p 6380:6379 -p 16380:16379 \
+  -v /Data_project_job/docker_image/redis/rd_data_slave:/data \
+  redis:7 \
+  redis-server \
+  --requirepass 1234 --masterauth 1234 \
+  --cluster-enabled yes --cluster-node-timeout 5000 \
+  --appendonly no --save 600 1 \
+  --cluster-announce-ip 192.168.122.65 \
+  --cluster-announce-port 6380 \
+  --cluster-announce-bus-port 16380
 
 
 ## Schema registry ## 

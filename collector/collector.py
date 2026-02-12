@@ -46,8 +46,6 @@ def _main():
         # ===============================
         redis = RedisHook(
             redis_env["redis_host"],
-            redis_env["redis_port"],
-            redis_env["redis_job_db"],
             redis_env["redis_password"]
         )
         redis.connect()
