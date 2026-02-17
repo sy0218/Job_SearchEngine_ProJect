@@ -160,6 +160,6 @@ company: 토스 AND (body_text : data engineer OR morph : "hadoop" OR morph : "s
 | 🌍 **웹 크롤링** | ![Selenium](https://img.shields.io/badge/Selenium-43B02A?style=for-the-badge&logo=Selenium&logoColor=white) ![Scrapy](https://img.shields.io/badge/Scrapy-9E1510?style=for-the-badge&logo=Scrapy&logoColor=white) |
 | 🖼️  **OCR** | ![EasyOCR](https://img.shields.io/badge/EasyOCR-FF9900?style=for-the-badge&logo=python&logoColor=white) |
 | 🤖 **AI / LLM** | ![LLM](https://img.shields.io/badge/LLM-FF6F61?style=for-the-badge&logo=OpenAI&logoColor=white) |
-| 📊 **모니터링 도구** | ![Prometheus](https://img.shields.io/badge/Prometheus-263238?style=for-the-badge&logo=Prometheus&logoColor=white) ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=Grafana&logoColor=white) |
+| 📊 **모니터링 & 시각화** | ![Prometheus](https://img.shields.io/badge/Prometheus-263238?style=for-the-badge&logo=Prometheus&logoColor=white) ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=Grafana&logoColor=white) ![Kibana](https://img.shields.io/badge/Kibana-005571?style=for-the-badge&logo=Kibana&logoColor=white) |
 
 ---
