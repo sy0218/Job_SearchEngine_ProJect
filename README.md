@@ -9,72 +9,66 @@
 ---
 <br><br>
 
-# 🎬 **UI 시연 (Kibana 기반)**
+# 🎬 **Kibana 검색**
 
-## 1️⃣ 메인 화면
-- Kibana 메인 UI 캡처  
-![Kibana Main](https://github.com/user-attachments/assets/fcc1b52b-5c73-4c50-961b-af4868141542)  
+## 1️⃣ Kibana 메인
+![Kibana Main](https://github.com/user-attachments/assets/fcc1b52b-5c73-4c50-961b-af4868141542)
 
 ---
-
 ## 2️⃣ 검색 결과 필드 설명 (1)
-- `_score` : Elasticsearch relevance score  
-- `company` : 회사명  
-- `title` : 공고 제목  
-- `href` : 공고 링크  
-- `type` : 채용 타입 (정규직, 계약직 등)  
-- `education` : 요구 학력  
-- `location` : 회사 주소  
-- `pay` : 급여  
-- `deadline` : 공고 마감일  
-- `domain` : 수집한 플랫폼 (사람인, 원티드, 리멤버 등)  
-![필드 설명](https://github.com/user-attachments/assets/d11b84d1-7987-4194-9ad3-49b7defd4acc)  
+- `_score` : Elasticsearch relevance score
+- `company` : 회사명
+- `title` : 공고 제목
+- `href` : 공고 링크
+- `type` : 채용 타입 (정규직, 계약직 등)
+- `education` : 요구 학력
+- `location` : 회사 주소
+- `pay` : 급여
+- `deadline` : 공고 마감일
+- `domain` : 수집한 플랫폼 (사람인, 원티드, 리멤버 등)
+
+![필드 설명](https://github.com/user-attachments/assets/d11b84d1-7987-4194-9ad3-49b7defd4acc)
 
 ---
 
 ## 3️⃣ 검색 결과 필드 설명 (2)
-- `body_text` : 공고 본문  
-- `morph` : 형태소 분석 배열 (유사도 검색용)  
-- `msgid` : 전체 파이프라인 멱등성을 위한 시그니처 값  
-![상세 필드](https://github.com/user-attachments/assets/c42d0fb8-4e95-4d54-8120-6a896144c34c)  
+- `body_text` : 공고 본문
+- `morph` : 형태소 분석 배열 (유사도 검색용)
+- `msgid` : 전체 파이프라인 멱등성을 위한 시그니처 값
+
+![상세 필드](https://github.com/user-attachments/assets/c42d0fb8-4e95-4d54-8120-6a896144c34c)
 
 ---
 
 ## 4️⃣ 본문 검색
-- **검색어:** `데이터엔지니어`  
-- **검색 필드:** `body_text`  
-![본문 검색](https://github.com/user-attachments/assets/71feec70-517b-48e2-9d4b-e6cf84158ed8)  
+- **검색어:** `데이터엔지니어`
+- **검색 필드:** `body_text`
+
+![본문 검색](https://github.com/user-attachments/assets/71feec70-517b-48e2-9d4b-e6cf84158ed8)
 
 ---
 
 ## 5️⃣ 제목 검색
-- **검색어:** `데이터엔지니어`  
-- **검색 필드:** `title`  
-![제목 검색](https://github.com/user-attachments/assets/e700019c-d1f9-4147-8319-26e9076ed0f0)  
+- **검색어:** `데이터엔지니어`
+- **검색 필드:** `title`
+
+![제목 검색](https://github.com/user-attachments/assets/e700019c-d1f9-4147-8319-26e9076ed0f0)
 
 ---
 
 ## 6️⃣ 회사 검색
-- **검색어:** `카카오`  
-- **검색 필드:** `company`  
-![회사 검색](https://github.com/user-attachments/assets/076b993c-0076-4008-aff3-c80c4a2e7dea)  
+- **검색어:** `카카오`
+- **검색 필드:** `company`
+
+![회사 검색](https://github.com/user-attachments/assets/076b993c-0076-4008-aff3-c80c4a2e7dea)
 
 ---
 
 ## 7️⃣ 형태소 기반 유사도 분석
 - **검색 키워드:** `"hadoop"`, `"spark"`, `"python"`, `"linux"`, `docker`, `kafka`
-- **검색 필드:** `morph`  
-![형태소 유사도 검색](https://github.com/user-attachments/assets/f6d5cbcc-5ab6-4432-8c09-24ae3c06a90c)  
+- **검색 필드:** `morph`
 
----
-
-## 8️⃣ 복합 검색
-- **검색 조건 👇**  
-```text
-company: 토스 AND (body_text : data engineer OR morph : "hadoop" OR morph : "spark" OR morph : "python" OR morph : "linux")
-```
-- 설명 : 회사명 + 본문 키워드 + 형태소 기반 유사도 검색 복합 적용
-![복합 검색](https://github.com/user-attachments/assets/73c80ade-6b7a-4815-8251-3fa788a56fbe)  
+![형태소 유사도 검색](https://github.com/user-attachments/assets/f6d5cbcc-5ab6-4432-8c09-24ae3c06a90c)
 
 ---
 <br><br>
