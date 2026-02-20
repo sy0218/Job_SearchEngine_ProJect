@@ -14,6 +14,12 @@
 ---
 <br>
 
+## 🔄 Warehouse Pipline
+![Pipline](https://github.com/user-attachments/assets/1823f3a3-61b9-4293-a70b-af3f1f4a8e7f)
+
+---
+<br>
+
 ## 📂 주요 파일 구조
 | 파일명 | 설명 |
 |------|------|

@@ -12,6 +12,12 @@
 ---
 <br>
 
+## 🔄 Hadoop Upload Pipline
+![Pipline](https://github.com/user-attachments/assets/97bd7f62-4f57-4299-8cc5-70a9c25823ed)
+
+---
+<br>
+
 ## 📂 주요 파일 구조
 | 파일명 | 설명 |
 |--------|------|

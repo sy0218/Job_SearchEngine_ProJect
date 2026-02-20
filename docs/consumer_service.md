@@ -16,6 +16,12 @@
 ---
 <br>
 
+## 🔄 Consumer Pipline
+![Pipline](https://github.com/user-attachments/assets/9d9312fd-1e75-42cb-81d8-8289983d18b2)
+
+---
+<br>
+
 ## 📂 주요 파일 구조
 | 파일명 | 설명 |
 |--------|------|

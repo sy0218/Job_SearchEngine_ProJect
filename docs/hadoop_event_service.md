@@ -10,6 +10,12 @@
 ---
 <br>
 
+## 🔄 Hadoop Event Pipline
+![Pipline](https://github.com/user-attachments/assets/d33defec-a208-4cd0-9a60-1cb88eda25f5)
+
+---
+<br>
+
 ## 📂 주요 파일 구조
 | 파일명 | 설명 |
 |--------|------|

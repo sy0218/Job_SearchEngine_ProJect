@@ -15,6 +15,12 @@
 ---
 <br>
 
+## 🔄 OCR Pipline
+![Pipline](https://github.com/user-attachments/assets/bb104053-ddfe-4801-ab1f-d7d7becd623b)
+
+---
+<br>
+
 ## 📂 주요 파일 구조
 | 파일명 | 설명 |
 |------|------|

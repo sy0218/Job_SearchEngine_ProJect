@@ -15,6 +15,12 @@
 ---
 <br>
 
+## 🔄 Elasticsearch Upload Pipline
+![Pipline](https://github.com/user-attachments/assets/df992894-764e-42f8-8274-1fc233619a35)
+
+---
+<br>
+
 ## 📂 주요 파일 구조
 
 | 파일명 | 설명 |
